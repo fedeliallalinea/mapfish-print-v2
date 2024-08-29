@@ -150,7 +150,7 @@ public class ShellMapPrinter {
             }
         } finally {
             if(outFile != null) outFile.close();
-            if(context != null) context.destroy();
+            if(context != null) context.close();
         }
     }
 

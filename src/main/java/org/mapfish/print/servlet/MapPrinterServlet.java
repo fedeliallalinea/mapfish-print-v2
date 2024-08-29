@@ -54,9 +54,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.lowagie.text.DocumentException;
 
@@ -66,7 +66,7 @@ import com.lowagie.text.DocumentException;
 public class MapPrinterServlet extends BaseMapServlet {
     public static final Logger SPEC_LOGGER = LogManager.getLogger(BaseMapServlet.class.getPackage().toString() + ".spec");
     private static final long serialVersionUID = -4706371598927161642L;
-    private static final String CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    private static final String CONTEXT_TEMPDIR = "jakarta.servlet.context.tempdir";
 
     private static final String INFO_URL = "/info.json";
     private static final String PRINT_URL = "/print.pdf";
@@ -242,7 +242,7 @@ public class MapPrinterServlet extends BaseMapServlet {
             closer.close();
         }
     }
-    
+
     /**
      * Get and cache the used Encoding.
      */
@@ -372,12 +372,12 @@ public class MapPrinterServlet extends BaseMapServlet {
             try {
                 out = new FileOutputStream(tempFile);
                 if(mapPrinter.getConfig().isAddForwardedFor()) {
-                    String ipAddress = httpServletRequest.getHeader("X-FORWARDED-FOR");  
+                    String ipAddress = httpServletRequest.getHeader("X-FORWARDED-FOR");
                     if (ipAddress != null) {
                         String[] ips = ipAddress.split(", ");
                         ipAddress = ips[0];
                     } else {
-                    ipAddress = httpServletRequest.getRemoteAddr();  
+                    ipAddress = httpServletRequest.getRemoteAddr();
                     }
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Forwarded for: " + ipAddress);

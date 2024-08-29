@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
   <version>2.3-SNAPSHOT</version>
@@ -15,7 +15,7 @@
     <name>MapFish</name>
     <url>http://www.mapfish.org</url>
   </organization>
-  
+
   <licenses>
     <license>
       <name>GPL-3.0-or-later</name>
@@ -23,7 +23,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:git:git@github.com:mapfish/mapfish-print-v2.git</connection>
     <developerConnection>scm:git:git@github.com:mapfish/mapfish-print-v2.git</developerConnection>
@@ -35,17 +35,17 @@
     <system>github</system>
     <url>https://github.com/mapfish/mapfish-print-v2/issues</url>
   </issueManagement>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <log4j-version>2.19.0</log4j-version>
-    <spring-version>5.3.18</spring-version>
+    <spring-version>6.1.11</spring-version>
     <gt-version>31.3</gt-version>
     <pdfbox-version>2.0.26</pdfbox-version>
-    <metrics-version>4.2.12</metrics-version>
+    <metrics-version>4.2.26</metrics-version>
     <jackson2.version>2.17.2</jackson2.version>
   </properties>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -116,10 +116,15 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.1.0</version>
       </dependency>
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>3.0.0</version>
+    </dependency>
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_codec</artifactId>
@@ -192,7 +197,7 @@
       </dependency>
       <dependency>
         <groupId>io.dropwizard.metrics</groupId>
-        <artifactId>metrics-servlet</artifactId>
+        <artifactId>metrics-jakarta-servlet</artifactId>
         <version>${metrics-version}</version>
       </dependency>
       <dependency>
@@ -202,7 +207,7 @@
       </dependency>
       <dependency>
         <groupId>io.dropwizard.metrics</groupId>
-        <artifactId>metrics-servlets</artifactId>
+        <artifactId>metrics-jakarta-servlets</artifactId>
         <version>${metrics-version}</version>
       </dependency>
       <dependency>
@@ -222,7 +227,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -245,8 +250,13 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -339,7 +349,7 @@
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-servlet</artifactId>
+      <artifactId>metrics-jakarta-servlet</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -349,7 +359,7 @@
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-servlets</artifactId>
+      <artifactId>metrics-jakarta-servlets</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -368,7 +378,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <!-- ======================================================= -->
@@ -383,8 +393,17 @@
           <target>11</target>  <!-- The -target argument for the Java compiler. -->
           <debug>true</debug>   <!-- Whether to include debugging information.   -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
-          <fork>${fork.javac}</fork> 
+          <fork>${fork.javac}</fork>
           <maxmem>${javac.maxHeapSize}</maxmem>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            --add-opens java.base/java.lang=ALL-UNNAMED
+          </argLine>
         </configuration>
       </plugin>
     </plugins>
@@ -442,7 +461,7 @@
       <url>https://repo.osgeo.org/repository/geoserver-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
-  
+
   <profiles>
     <!-- build docs first, and this profile -->
     <!-- will assemble into a zip download -->

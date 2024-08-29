@@ -20,11 +20,13 @@
 package org.mapfish.print.metrics;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.servlets.HealthCheckServlet;
+
+import io.dropwizard.metrics.servlets.HealthCheckServlet;
+
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
 
 import static org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext;
 

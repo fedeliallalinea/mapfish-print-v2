@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.mapfish.print.config.Config;
 import org.mapfish.print.utils.PJsonObject;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User: jeichar
@@ -45,7 +45,7 @@ public class OutputFactory {
      *
      * @param formatFactories
      */
-    @Required
+    @Autowired
     public void setFormatFactories(List<OutputFormatFactory> formatFactories) {
         this.formatFactories = formatFactories;
     }
