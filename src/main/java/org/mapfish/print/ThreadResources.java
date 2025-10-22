@@ -5,8 +5,8 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.mapfish.print.map.MapTileTask;
 import org.pvalsecc.concurrent.OrderedResultsExecutor;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 /**
  * Encapsulates resources that start and stop threads and need to be disposed and controlled.

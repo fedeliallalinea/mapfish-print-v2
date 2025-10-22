@@ -4,7 +4,7 @@
   
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
-  <version>2.4-SNAPSHOT</version>
+  <version>2.5-SNAPSHOT</version>
 
   <description>
     MapFish Print Version 2 has reached end-of-life and is no longer under active development.
@@ -39,11 +39,11 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--log4j-version>2.24.3</log4j-version-->
-    <spring.version>5.3.39</spring.version>
+    <spring.version>6.2.12</spring.version>
     <gt.version>35-SNAPSHOT</gt.version>
-    <imagen.version>0.9.0</imagen.version> <!-- sync with gt-platform-dependences -->
+    <imagen.version>0.9.1-SNAPSHOT</imagen.version> <!-- sync with gt-platform-dependences -->
     <pdfbox.version>2.0.34</pdfbox.version>
-    <metrics-version>4.2.30</metrics-version>
+    <metrics-version>4.2.37</metrics-version>
     <!--jackson2.version>2.18.2</jackson2.version-->
     <fork.javac>true</fork.javac>
     <javac.maxHeapSize>512m</javac.maxHeapSize>
@@ -77,9 +77,14 @@
       </dependency>
       <!-- transitive dependency -->
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>3.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
@@ -149,7 +154,7 @@
       </dependency>
       <dependency>
         <groupId>io.dropwizard.metrics</groupId>
-        <artifactId>metrics-servlets</artifactId>
+        <artifactId>metrics-jakarta-servlets</artifactId>
         <version>${metrics-version}</version>
       </dependency>
       <dependency>
@@ -190,11 +195,6 @@
       <groupId>org.locationtech.jts</groupId>
       <artifactId>jts-core</artifactId>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -286,18 +286,21 @@
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-servlet</artifactId>
+      <artifactId>metrics-jakarta-servlets</artifactId>
       <scope>compile</scope>
-    </dependency>
+    </dependency>    
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-httpclient</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-servlets</artifactId>
-      <scope>compile</scope>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>

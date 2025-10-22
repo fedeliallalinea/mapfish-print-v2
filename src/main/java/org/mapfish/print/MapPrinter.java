@@ -45,7 +45,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 
 /**
  * The main class for printing maps. Will parse the spec, create the PDF

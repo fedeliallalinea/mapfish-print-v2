@@ -20,11 +20,11 @@
 package org.mapfish.print.metrics;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.servlet.InstrumentedFilterContextListener;
+import io.dropwizard.metrics.servlets.MetricsServlet;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
 
 import static org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext;
 
@@ -33,7 +33,7 @@ import static org.springframework.web.context.support.WebApplicationContextUtils
  * <p/>
  * @author jesseeichar on 3/21/2014.
  */
-public class MapfishPrintInstrumentedFilterContextListener extends InstrumentedFilterContextListener {
+public class MapfishPrintInstrumentedFilterContextListener extends MetricsServlet.ContextListener {
     private ServletContext servletContext;
 
     @Override

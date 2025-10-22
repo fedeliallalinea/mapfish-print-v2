@@ -1,5 +1,14 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.5.0
+
+Release notes:
+
+* GeoTools 35.0
+* ImageN 0.9.1
+* Migrate to Spring Framework 6.2.12 and Jakarta Servlet 6.0.0
+* Update metrics to 4.2.37
+
 ## Release 2.4.0
 
 Release notes:
