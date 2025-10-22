@@ -233,8 +233,7 @@ public class WMSMapReader extends TileableMapReader {
             return false;
         }
 
-        if (other instanceof WMSMapReader) {
-            WMSMapReader wms = (WMSMapReader) other;
+        if (other instanceof WMSMapReader wms) {
             if (!format.equals(wms.format)) {
                 return false;
             }
@@ -299,13 +298,13 @@ public class WMSMapReader extends TileableMapReader {
         switch (version) {
             case VERSION1_3_0:
                 if (strictEpsg4326) {
-                    bbox = String.format("%s,%s,%s,%s", minGeoY, minGeoX, maxGeoY, maxGeoX);
+                    bbox = "%s,%s,%s,%s".formatted(minGeoY, minGeoX, maxGeoY, maxGeoX);
                 } else {
-                    bbox = String.format("%s,%s,%s,%s", minGeoX, minGeoY, maxGeoX, maxGeoY);
+                    bbox = "%s,%s,%s,%s".formatted(minGeoX, minGeoY, maxGeoX, maxGeoY);
                 }
                 break;
             default:
-                bbox = String.format("%s,%s,%s,%s", minGeoX, minGeoY, maxGeoX, maxGeoY);
+                bbox = "%s,%s,%s,%s".formatted(minGeoX, minGeoY, maxGeoX, maxGeoY);
         }
 
         URIUtils.addParamOverride(tileParams, "BBOX", bbox);

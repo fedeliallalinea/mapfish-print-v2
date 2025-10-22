@@ -103,8 +103,8 @@ public class MapServerMapReader extends HTTPMapReader {
         URIUtils.addParamOverride(result, "MODE", "map");
         URIUtils.addParamOverride(result, "LAYERS", StringUtils.join(layers, " "));
         //URIUtils.addParamOverride(result, "SRS", srs);
-        URIUtils.addParamOverride(result, "MAP_SIZE", String.format("%d %d", w, h));
-        URIUtils.addParamOverride(result, "MAPEXT", String.format("%s %s %s %s", transformer.getRotatedMinGeoX(), transformer.getRotatedMinGeoY(), transformer.getRotatedMaxGeoX(), transformer.getRotatedMaxGeoY()));
+        URIUtils.addParamOverride(result, "MAP_SIZE", "%d %d".formatted(w, h));
+        URIUtils.addParamOverride(result, "MAPEXT", "%s %s %s %s".formatted(transformer.getRotatedMinGeoX(), transformer.getRotatedMinGeoY(), transformer.getRotatedMaxGeoX(), transformer.getRotatedMaxGeoY()));
         URIUtils.addParamOverride(result, "map_resolution", String.valueOf(transformer.getDpi()));
         if (!first) {
             URIUtils.addParamOverride(result, "TRANSPARENT", "true");
@@ -125,8 +125,7 @@ public class MapServerMapReader extends HTTPMapReader {
             return false;
         }
 
-        if (other instanceof MapServerMapReader) {
-            MapServerMapReader wms = (MapServerMapReader) other;
+        if (other instanceof MapServerMapReader wms) {
             return format.equals(wms.format);
         } else {
             return false;

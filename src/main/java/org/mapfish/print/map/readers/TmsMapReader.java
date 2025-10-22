@@ -114,7 +114,7 @@ public class TmsMapReader extends TileableMapReader {
 
         path.append(this.serviceVersion);
         path.append('/').append(this.layerName);
-        path.append('/').append(String.format("%02d", resolution.index));
+        path.append('/').append("%02d".formatted(resolution.index));
         path.append('/').append(tileCoords[0]);
         path.append('/').append(tileCoords[1]);
         path.append('.').append(this.format);

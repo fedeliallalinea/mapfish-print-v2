@@ -205,8 +205,7 @@ public abstract class HTTPMapReader extends MapReader {
             return false;
         }
 
-        if (other instanceof HTTPMapReader) {
-            HTTPMapReader http = (HTTPMapReader) other;
+        if (other instanceof HTTPMapReader http) {
             PJsonObject customParams = params.optJSONObject("customParams");
             PJsonObject customParamsOther = http.params.optJSONObject("customParams");
             return baseUrl.equals(http.baseUrl) &&

@@ -94,7 +94,7 @@ public class XyzMapReader extends TileableMapReader {
         }
 
         if (this.path_format == null) {
-            path.append(String.format("%d", resolution.index));
+            path.append("%d".formatted(resolution.index));
             path.append('/').append(tileCoords[0]);
             path.append('/').append(tileCoords[1]);
             path.append('.').append(tileCacheLayerInfo.getExtension());

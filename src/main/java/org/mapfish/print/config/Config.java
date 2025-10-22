@@ -508,8 +508,8 @@ public class Config implements Closeable {
     public boolean localHostForwardIsHttps2http() {
         if (localHostForward != null) {
             Object https2http = localHostForward.get("https2http");
-            if (https2http != null && https2http instanceof Boolean) {
-                return (Boolean)https2http;
+            if (https2http != null && https2http instanceof Boolean boolean1) {
+                return boolean1;
             }
         }
         return false;
@@ -518,8 +518,8 @@ public class Config implements Closeable {
     public boolean localHostForwardIsFrom(String host) {
         if (localHostForward != null) {
             Object from = localHostForward.get("from");
-            if (from != null && from instanceof List) {
-                return ((List)from).indexOf(host) >= 0;
+            if (from != null && from instanceof List list) {
+                return list.indexOf(host) >= 0;
             }
         }
         return false;

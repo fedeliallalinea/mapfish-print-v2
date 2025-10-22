@@ -40,7 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--log4j-version>2.24.3</log4j-version-->
     <spring.version>5.3.39</spring.version>
-    <gt.version>34.0</gt.version>
+    <gt.version>35-SNAPSHOT</gt.version>
     <imagen.version>0.9.0</imagen.version> <!-- sync with gt-platform-dependences -->
     <pdfbox.version>2.0.34</pdfbox.version>
     <metrics-version>4.2.30</metrics-version>
@@ -324,9 +324,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.14.1</version>
         <configuration>
-          <release>11</release> <!-- Java release version -->
+          <release>17</release> <!-- Java release version -->
           <debug>true</debug>   <!-- Whether to include debugging information.   -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
           <fork>${fork.javac}</fork> 

@@ -39,11 +39,11 @@ public abstract class UnitUtilities {
         }
 
         if (value < 10.0) {
-            return String.format("%.2f%s", value, COMPUTER_UNITS[curUnit]);
+            return "%.2f%s".formatted(value, COMPUTER_UNITS[curUnit]);
         } else if (value + 0.05 < 100.0) {
-            return String.format("%.1f%s", value, COMPUTER_UNITS[curUnit]);
+            return "%.1f%s".formatted(value, COMPUTER_UNITS[curUnit]);
         } else {
-            return String.format("%d%s", Math.round(value), COMPUTER_UNITS[curUnit]);
+            return "%d%s".formatted(Math.round(value), COMPUTER_UNITS[curUnit]);
         }
     }
 
@@ -54,15 +54,15 @@ public abstract class UnitUtilities {
         double secs = millis / 1000.0;
 
         if (secs < 10.0) {
-            return String.format("%dms", millis);
+            return "%dms".formatted(millis);
         } else if (secs < 60 - 0.005) {
-            return String.format("%.2fs", secs);
+            return "%.2fs".formatted(secs);
         } else if (secs < 3600 - 0.5) {
-            return String.format("%dm%02ds", (int) Math.floor((secs + 0.005) / 60.0), Math.round(secs) % 60);
+            return "%dm%02ds".formatted((int) Math.floor((secs + 0.005) / 60.0), Math.round(secs) % 60);
         } else if (secs < 24 * 3600 - 0.5) {
-            return String.format("%dh%02dm%02ds", (int) Math.floor((secs + 0.5) / 3600.0), (int) Math.floor((secs + 0.5) / 60.0) % 60, Math.round(secs) % 60);
+            return "%dh%02dm%02ds".formatted((int) Math.floor((secs + 0.5) / 3600.0), (int) Math.floor((secs + 0.5) / 60.0) % 60, Math.round(secs) % 60);
         } else {
-            return String.format("%dd%02dh%02dm%02ds", (int) Math.floor((secs + 0.5) / 3600.0 / 24.0), (int) Math.floor((secs + 0.5) / 3600.0) % 24, (int) Math.floor((secs + 0.5) / 60.0) % 60, Math.round(secs) % 60);
+            return "%dd%02dh%02dm%02ds".formatted((int) Math.floor((secs + 0.5) / 3600.0 / 24.0), (int) Math.floor((secs + 0.5) / 3600.0) % 24, (int) Math.floor((secs + 0.5) / 60.0) % 60, Math.round(secs) % 60);
         }
     }
 
@@ -71,10 +71,10 @@ public abstract class UnitUtilities {
      */
     public static String toElapsedNanoTime(long nanos) {
         if (nanos < 10 * 1000) {
-            return String.format("%dns", nanos);
+            return "%dns".formatted(nanos);
         }
         if (nanos < 10 * 1000 * 1000 - 500) {
-            return String.format("%dus", (nanos + 500) / 1000);
+            return "%dus".formatted((nanos + 500) / 1000);
         } else {
             return toElapsedTime((nanos + 500000) / (1000 * 1000));
         }

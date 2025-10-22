@@ -592,7 +592,7 @@ public class PDFUtils {
             return valueTxt;
         }
         try {
-            return String.format(matcher.group(1), value);
+            return matcher.group(1).formatted(value);
         } catch (RuntimeException e) {
             // gracefuly fallback to the standard format
             context.addError(e);
@@ -661,8 +661,8 @@ public class PDFUtils {
         final PdfPCell[] cell = new PdfPCell[1];
         block.render(params, new Block.PdfElement() {
             public void add(Element element) throws DocumentException {
-                if (element instanceof PdfPTable) {
-                    cell[0] = new PdfPCell((PdfPTable) element);
+                if (element instanceof PdfPTable table) {
+                    cell[0] = new PdfPCell(table);
                 } else {
                     final Phrase phrase = new Phrase();
                     phrase.add(element);

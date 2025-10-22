@@ -44,21 +44,23 @@ public class CustomXPathTest extends PrintTestCase {
     @Test
     public void testXslt() throws TransformerException, IOException {
         final StringReader xsltStream = new StringReader(
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                        "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n" +
-                        "                xmlns:xalan=\"http://xml.apache.org/xalan\"\n" +
-                        "                xmlns:custom=\"Custom\"\n" +
-                        "                version=\"1.0\">\n" +
-                        "  <xalan:component prefix=\"custom\" functions=\"factorArray\">\n" +
-                        "    <xalan:script lang=\"javaclass\" src=\"org.mapfish.print.CustomXPath\"/>\n" +
-                        "  </xalan:component>\n" +
-                        "  <xsl:template match=\"/*\">\n" +
-                        "    <tutu b=\"{custom:factorArray(@a,3)}\"/>\n" +
-                        "  </xsl:template>\n" +
-                        "</xsl:stylesheet>");
+                """
+                <?xml version="1.0" encoding="utf-8"?>
+                <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                                xmlns:xalan="http://xml.apache.org/xalan"
+                                xmlns:custom="Custom"
+                                version="1.0">
+                  <xalan:component prefix="custom" functions="factorArray">
+                    <xalan:script lang="javaclass" src="org.mapfish.print.CustomXPath"/>
+                  </xalan:component>
+                  <xsl:template match="/*">
+                    <tutu b="{custom:factorArray(@a,3)}"/>
+                  </xsl:template>
+                </xsl:stylesheet>""");
         final StringReader xmlStream = new StringReader(
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                        "<toto a=\"1,2,3\"/>");
+                """
+                <?xml version="1.0" encoding="utf-8"?>
+                <toto a="1,2,3"/>""");
 
 
         DOMResult transformedSvg = new DOMResult();

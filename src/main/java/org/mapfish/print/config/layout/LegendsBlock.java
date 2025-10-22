@@ -717,11 +717,11 @@ public class LegendsBlock extends Block {
          */
         private float getHeight(Element element) throws DocumentException {
             tempDocument.add(element);
-            if (element instanceof PdfPTable) {
-                return ((PdfPTable) element).getTotalHeight();
+            if (element instanceof PdfPTable table) {
+                return table.getTotalHeight();
             }
-            if (element instanceof PdfPCell) {
-                return ((PdfPCell) element).getHeight();
+            if (element instanceof PdfPCell cell) {
+                return cell.getHeight();
             }
             return -1;
         }

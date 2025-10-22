@@ -19,6 +19,7 @@
 
 package org.mapfish.print.config.layout;
 
+import java.io.Serial;
 import java.util.HashMap;
 
 import org.mapfish.print.InvalidValueException;
@@ -30,6 +31,7 @@ public class Layouts extends HashMap<String, Layout> {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

@@ -19,6 +19,7 @@
 
 package org.mapfish.print.config.layout;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 /**
@@ -29,5 +30,6 @@ public class Exceptions extends ArrayList<CellException> {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 }

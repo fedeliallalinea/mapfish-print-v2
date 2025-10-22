@@ -47,25 +47,27 @@ public class LabelRendererTest {
         Point point = jtsFactory.createPoint(new Coordinate(new Coordinate(0, 1)));
 
         final PdfContentByte dc = Mockito.mock(PdfContentByte.class);
-        JSONObject jsonObject = new JSONObject("{\n" +
-                "                        \"fontSize\": 14,\n" +
-                "                        \"fontFamily\": \"HELVETICA\",\n" +
-                "                        \"fontWeight\": \"normal\",\n" +
-                "                        \"labelAlign\": \"cb\",\n" +
-                "                        \"labelXOffset\": 0,\n" +
-                "                        \"labelYOffset\": 0,\n" +
-                "                        \"rotation\": 0,\n" +
-                "                        \"fontColor\": \"#333333\",\n" +
-                "                        \"fontOpacity\": 1,\n" +
-                "                        \"label\": \"Overlapping label\",\n" +
-                "                        \"fillOpacity\": 0,\n" +
-                "                        \"pointRadius\": 0,\n" +
-                "                        \"strokeOpacity\": 0,\n" +
-                "                        \"strokeWidth\": 0,\n" +
-                "                        \"labelOutlineColor\":\"#ffffff\"," +
-                "                        \"labelOutlineOpacity\":1," +
-                "                        \"labelOutlineWidth\":3" +
-                "                    }");
+        JSONObject jsonObject = new JSONObject("""
+                {
+                                        "fontSize": 14,
+                                        "fontFamily": "HELVETICA",
+                                        "fontWeight": "normal",
+                                        "labelAlign": "cb",
+                                        "labelXOffset": 0,
+                                        "labelYOffset": 0,
+                                        "rotation": 0,
+                                        "fontColor": "#333333",
+                                        "fontOpacity": 1,
+                                        "label": "Overlapping label",
+                                        "fillOpacity": 0,
+                                        "pointRadius": 0,
+                                        "strokeOpacity": 0,
+                                        "strokeWidth": 0,
+                                        "labelOutlineColor":"#ffffff",\
+                                        "labelOutlineOpacity":1,\
+                                        "labelOutlineWidth":3\
+                                    }\
+                """);
 
         RenderingContext context = Mockito.mock(RenderingContext.class);
         LabelRenderer.applyStyle(context, dc, new PJsonObject(jsonObject, "style"), point, AffineTransform.getTranslateInstance(0, 0));
@@ -84,26 +86,28 @@ public class LabelRendererTest {
         Point point = jtsFactory.createPoint(new Coordinate(new Coordinate(0, 1)));
 
         final PdfContentByte dc = Mockito.mock(PdfContentByte.class);
-        JSONObject jsonObject = new JSONObject("{\n" +
-                "                        \"fontSize\": 14,\n" +
-                "                        \"fontFamily\": \"HELVETICA\",\n" +
-                "                        \"fontWeight\": \"normal\",\n" +
-                "                        \"labelAlign\": \"cb\",\n" +
-                "                        \"labelXOffset\": 0,\n" +
-                "                        \"labelYOffset\": 0,\n" +
-                "                        \"rotation\": 0,\n" +
-                "                        \"fontColor\": \"#333333\",\n" +
-                "                        \"fontOpacity\": 1,\n" +
-                "                        \"label\": \"Overlapping label\",\n" +
-                "                        \"labelOutlineMode\": \"stroke\",\n" +
-                "                        \"fillOpacity\": 0,\n" +
-                "                        \"pointRadius\": 0,\n" +
-                "                        \"strokeOpacity\": 0,\n" +
-                "                        \"strokeWidth\": 0,\n" +
-                "                        \"labelOutlineColor\":\"#ffffff\"," +
-                "                        \"labelOutlineOpacity\":1," +
-                "                        \"labelOutlineWidth\":3" +
-                "                    }");
+        JSONObject jsonObject = new JSONObject("""
+                {
+                                        "fontSize": 14,
+                                        "fontFamily": "HELVETICA",
+                                        "fontWeight": "normal",
+                                        "labelAlign": "cb",
+                                        "labelXOffset": 0,
+                                        "labelYOffset": 0,
+                                        "rotation": 0,
+                                        "fontColor": "#333333",
+                                        "fontOpacity": 1,
+                                        "label": "Overlapping label",
+                                        "labelOutlineMode": "stroke",
+                                        "fillOpacity": 0,
+                                        "pointRadius": 0,
+                                        "strokeOpacity": 0,
+                                        "strokeWidth": 0,
+                                        "labelOutlineColor":"#ffffff",\
+                                        "labelOutlineOpacity":1,\
+                                        "labelOutlineWidth":3\
+                                    }\
+                """);
 
         RenderingContext context = Mockito.mock(RenderingContext.class);
         LabelRenderer.applyStyle(context, dc, new PJsonObject(jsonObject, "style"), point, AffineTransform.getTranslateInstance(0, 0));

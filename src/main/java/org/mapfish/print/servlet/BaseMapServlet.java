@@ -32,6 +32,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,6 +41,7 @@ import javax.servlet.http.HttpServlet;
  * Base class for MapPrinter servlets (deals with the configuration loading)
  */
 public abstract class BaseMapServlet extends HttpServlet {
+    @Serial
     private static final long serialVersionUID = -6342262849725708850L;
 
     public static final Logger LOGGER = LogManager.getLogger(BaseMapServlet.class);

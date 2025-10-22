@@ -176,8 +176,7 @@ public class ServerInfoCache<T extends ServiceInfo> {
             final NodeList nodeList = element.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if (node instanceof Element) {
-                    Element child = (Element) node;
+                if (node instanceof Element child) {
                     if (getLocalName(child).equals(tagName)) {
                         final String textContent = node.getTextContent();
                         if (!textContent.trim().isEmpty()) {
@@ -227,9 +226,9 @@ public class ServerInfoCache<T extends ServiceInfo> {
             final NodeList childNodes = element.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node elem = childNodes.item(i);
-                if (elem instanceof Element) {
+                if (elem instanceof Element element1) {
                     if (getLocalName(elem).equals(tagName)) {
-                        return (Element) elem;
+                        return element1;
                     }
                 }
             }

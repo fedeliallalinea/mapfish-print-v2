@@ -19,6 +19,7 @@
 
 package org.mapfish.print;
 
+import java.io.Serial;
 import org.mapfish.print.utils.PJsonElement;
 
 /**
@@ -28,6 +29,7 @@ public class JsonMissingException extends PrintException {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public JsonMissingException(PJsonElement pJsonObject, String key) {

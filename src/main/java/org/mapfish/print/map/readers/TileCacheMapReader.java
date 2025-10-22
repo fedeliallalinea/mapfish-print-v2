@@ -80,13 +80,13 @@ public class TileCacheMapReader extends TileableMapReader {
             path.append('/');
         }
         path.append(layer);
-        path.append('/').append(String.format("%02d", resolution.index));
-        path.append('/').append(String.format("%03d", (tileX / 1000000) % 1000));
-        path.append('/').append(String.format("%03d", (tileX / 1000) % 1000));
-        path.append('/').append(String.format("%03d", tileX % 1000));
-        path.append('/').append(String.format("%03d", (tileY / 1000000) % 1000));
-        path.append('/').append(String.format("%03d", (tileY / 1000) % 1000));
-        path.append('/').append(String.format("%03d", tileY % 1000));
+        path.append('/').append("%02d".formatted(resolution.index));
+        path.append('/').append("%03d".formatted((tileX / 1000000) % 1000));
+        path.append('/').append("%03d".formatted((tileX / 1000) % 1000));
+        path.append('/').append("%03d".formatted(tileX % 1000));
+        path.append('/').append("%03d".formatted((tileY / 1000000) % 1000));
+        path.append('/').append("%03d".formatted((tileY / 1000) % 1000));
+        path.append('/').append("%03d".formatted(tileY % 1000));
         path.append('.').append(tileCacheLayerInfo.getExtension());
 
         return new URI(commonUri.getScheme(), commonUri.getUserInfo(), commonUri.getHost(), commonUri.getPort(), commonUri.getPath() + path, commonUri.getQuery(), commonUri.getFragment());

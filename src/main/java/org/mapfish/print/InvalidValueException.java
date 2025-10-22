@@ -19,6 +19,8 @@
 
 package org.mapfish.print;
 
+import java.io.Serial;
+
 /**
  * Thrown when there is something invalid in the YAML file
  */
@@ -26,6 +28,7 @@ public class InvalidValueException extends PrintException {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public InvalidValueException(String name, String value) {

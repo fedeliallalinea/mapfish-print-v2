@@ -170,8 +170,7 @@ public class PJsonObject extends PJsonElement {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof PJsonObject) {
-            PJsonObject other = (PJsonObject) obj;
+        if (obj instanceof PJsonObject other) {
             if (size() != other.size()) {
                 return false;
             }
