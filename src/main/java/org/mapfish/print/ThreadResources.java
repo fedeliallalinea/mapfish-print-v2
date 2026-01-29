@@ -1,7 +1,7 @@
 package org.mapfish.print;
 
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.mapfish.print.map.MapTileTask;
 import org.pvalsecc.concurrent.OrderedResultsExecutor;
 
@@ -21,21 +21,23 @@ public class ThreadResources {
      */
     private OrderedResultsExecutor<MapTileTask> mapRenderingExecutor = null;
 
-    private MultiThreadedHttpConnectionManager connectionManager;
+    private PoolingHttpClientConnectionManager connectionManager;
+
     private int perHostParallelFetches = 10;
     private int globalParallelFetches = 30;
-    private int connectionTimeout = 30000;
     private int socketTimeout = 30000;
 
     @PostConstruct
     public void init() {
-        this.connectionManager = new MultiThreadedHttpConnectionManager();
+        this.connectionManager = new PoolingHttpClientConnectionManager();
 
-        final HttpConnectionManagerParams params = this.connectionManager.getParams();
-        params.setDefaultMaxConnectionsPerHost(this.perHostParallelFetches);
-        params.setMaxTotalConnections(this.globalParallelFetches);
-        params.setSoTimeout(this.socketTimeout);
-        params.setConnectionTimeout(this.connectionTimeout);
+        this.connectionManager.setDefaultMaxPerRoute(perHostParallelFetches);
+        this.connectionManager.setMaxTotal(globalParallelFetches);
+
+        SocketConfig socketConfig = SocketConfig.custom()
+                .setSoTimeout(socketTimeout)
+                .build();
+        this.connectionManager.setDefaultSocketConfig(socketConfig);
 
         mapRenderingExecutor = new OrderedResultsExecutor<MapTileTask>(globalParallelFetches, "tilesReader");
         mapRenderingExecutor.start();
@@ -44,7 +46,7 @@ public class ThreadResources {
     @PreDestroy
     public void destroy() {
         try {
-            this.connectionManager.shutdown();
+            this.connectionManager.close();
         } finally {
             this.mapRenderingExecutor.stop();
         }
@@ -58,15 +60,11 @@ public class ThreadResources {
         this.globalParallelFetches = globalParallelFetches;
     }
 
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 
-    public MultiThreadedHttpConnectionManager getConnectionManager() {
+    public PoolingHttpClientConnectionManager getConnectionManager() {
         return connectionManager;
     }
 

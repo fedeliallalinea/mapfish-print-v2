@@ -2,9 +2,15 @@ package org.mapfish.print.config;
 
 import java.net.URI;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.http.HttpHost;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 
 public class BasicAuthSecurity extends SecurityStrategy {
 
@@ -13,16 +19,27 @@ public class BasicAuthSecurity extends SecurityStrategy {
     boolean preemptive = false;
 
     @Override
-    public void configure(URI uri, HttpClient httpClient) {
+    public HttpClientContext createContext(URI uri){
         if(username==null || password==null) throw new IllegalStateException("username and password configuration of BasicAuthSecurity is required");
 
-        if(preemptive) {
-            httpClient.getParams().setAuthenticationPreemptive(true);
-        }
-        httpClient.getState().setCredentials(
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
                 new AuthScope(uri.getHost(), uri.getPort()),
-                new UsernamePasswordCredentials(username, password));
+                new UsernamePasswordCredentials(username, password)
+        );
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider(credsProvider);
+
+        if (preemptive) {
+            HttpHost target = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
+            AuthCache authCache = new BasicAuthCache();
+            authCache.put(target, new BasicScheme());
+            context.setAuthCache(authCache);
+        }
+
+        return context;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }

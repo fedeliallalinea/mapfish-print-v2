@@ -5,7 +5,7 @@ import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -18,7 +18,7 @@ import org.apache.commons.httpclient.HttpClient;
 public abstract class SecurityStrategy {
     private HostMatcher matcher;
 
-    public abstract void configure(URI uri, HttpClient httpClient);
+    public abstract HttpClientContext createContext(URI uri);
     public boolean matches(URI uri) {
         try {
             return matcher==null || matcher.validate(uri);

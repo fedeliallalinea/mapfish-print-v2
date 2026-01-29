@@ -1,8 +1,11 @@
 package org.mapfish.print.map.readers;
 
 import com.codahale.metrics.MetricRegistry;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.mapfish.print.RenderingContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,7 +74,7 @@ public class ServerInfoCache<T extends ServiceInfo> {
     private T requestInfo(URI baseUrl, RenderingContext context) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
         URL url = loader.createURL(baseUrl, context);
 
-        GetMethod method = null;
+        HttpGet request;
 
         MetricRegistry registry = context.getConfig().getMetricRegistry();
         final com.codahale.metrics.Timer.Context timer = registry.timer("http_" + url.getAuthority()).time();
@@ -96,16 +99,20 @@ public class ServerInfoCache<T extends ServiceInfo> {
                 stream = connexion.getInputStream();
             }
             else {
-                method = new GetMethod(url.toString());
+                request = new HttpGet(url.toString());
                 for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                    method.setRequestHeader(entry.getKey(), entry.getValue());
+                    request.addHeader(entry.getKey(), entry.getValue());
                 }
-                context.getConfig().getHttpClient(baseUrl).executeMethod(method);
-                int code = method.getStatusCode();
-                if (code < 200 || code >= 300) {
-                    throw new IOException("Error " + code + " while reading the Capabilities from " + url + ": " + method.getStatusText());
+                HttpClientContext clientContext = context.getConfig().getHttpClientContext(baseUrl);
+                try(CloseableHttpResponse response = context.getConfig().getHttpClient(baseUrl).execute(request, clientContext)) {
+                    int code = response.getStatusLine().getStatusCode();
+                    String reason = response.getStatusLine().getReasonPhrase();
+                    if (code < 200 || code >= 300) {
+                        throw new IOException("Error " + code + " while reading the Capabilities from " + url + ": " + reason);
+                    }
+                    stream = response.getEntity().getContent();
+                    return loader.parseInfo(stream);
                 }
-                stream = method.getResponseBodyAsStream();
             }
             final T result;
             try {
@@ -116,9 +123,6 @@ public class ServerInfoCache<T extends ServiceInfo> {
             return result;
         } finally {
             timer.stop();
-            if (method != null) {
-                method.releaseConnection();
-            }
         }
     }
     public static abstract class ServiceInfoLoader<T extends ServiceInfo> {

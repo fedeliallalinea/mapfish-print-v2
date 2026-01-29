@@ -19,11 +19,14 @@
 
 package org.mapfish.print.config;
 
-//import org.apache.commons.httpclient.HostConfiguration;
 import com.codahale.metrics.MetricRegistry;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +59,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
-//import org.mapfish.print.output.OutputFormat;
 
 /**
  * Bean mapping the root of the configuration file.
@@ -355,39 +357,53 @@ public class Config implements Closeable {
     /**
      * Get or create the http client to be used to fetch all the map data.
      */
-    public HttpClient getHttpClient(URI uri) {
-        MultiThreadedHttpConnectionManager connectionManager = getConnectionManager();
-        HttpClient httpClient = new HttpClient(connectionManager);
+    public CloseableHttpClient getHttpClient(URI uri) {
+        PoolingHttpClientConnectionManager connectionManager = getConnectionManager();
+        RequestConfig requestConfig = createRequestConfig(uri);
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
 
         // httpclient is a bit pesky about loading everything in memory...
         // disabling the warnings.
-        Logger logger=LogManager.getLogger(HttpMethodBase.class);
+        Logger logger=LogManager.getLogger(HttpRequestBase.class);
         Configurator.setLevel(logger,Level.ERROR);
+
+        return httpClient;
+    }
+
+    public HttpClientContext getHttpClientContext(URI uri) {
+        for(SecurityStrategy sec : security)
+            if(sec.matches(uri)) {
+                return sec.createContext(uri);
+            }
+        return null;
+    }
+
+    private PoolingHttpClientConnectionManager getConnectionManager() {
+        return this.threadResources.getConnectionManager();
+    }
+
+    private RequestConfig createRequestConfig(URI uri) {
+        RequestConfig.Builder builder = RequestConfig.custom()
+                .setConnectTimeout(connectionTimeout)
+                .setConnectionRequestTimeout(connectionTimeout)
+                .setSocketTimeout(socketTimeout);
 
         // configure proxies for URI
         ProxySelector selector = ProxySelector.getDefault();
-
         List<Proxy> proxyList = selector.select(uri);
         Proxy proxy = proxyList.get(0);
-
         if (!proxy.equals(Proxy.NO_PROXY)) {
             InetSocketAddress socketAddress = (InetSocketAddress) proxy.address();
             String hostName = socketAddress.getHostName();
             int port = socketAddress.getPort();
 
-            httpClient.getHostConfiguration().setProxy(hostName, port);
+            HttpHost httpHost = new HttpHost(hostName, port, "http");
+            builder.setProxy(httpHost);
         }
-
-        for(SecurityStrategy sec : security)
-        if(sec.matches(uri)) {
-            sec.configure(uri, httpClient);
-            break;
-        }
-        return httpClient;
-    }
-
-    private MultiThreadedHttpConnectionManager getConnectionManager() {
-        return this.threadResources.getConnectionManager();
+        return builder.build();
     }
 
     public void setTilecacheMerging(boolean tilecacheMerging) {

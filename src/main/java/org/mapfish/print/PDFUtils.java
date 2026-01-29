@@ -52,7 +52,6 @@ import org.apache.batik.gvt.GraphicsNode;
 import java.io.File;
 import org.apache.batik.util.XMLResourceDescriptor;
 import java.io.IOException;
-import org.apache.commons.httpclient.Header;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
@@ -60,7 +59,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.util.EntityUtils;
 import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -271,31 +275,28 @@ public class PDFUtils {
                         }
                     }
                 } else {
-                    GetMethod getMethod = null;
+                    HttpGet request;
                     MetricRegistry registry = context.getConfig().getMetricRegistry();
                     final Timer.Context timer = registry.timer("http_" + uri.getAuthority()).time();
                     try {
-                        getMethod = new GetMethod(uri.toString());
+                        request = new HttpGet(uri.toString());
                         for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                            getMethod.setRequestHeader(entry.getKey(), entry.getValue());
+                            request.addHeader(entry.getKey(), entry.getValue());
                         }
-                        if (LOGGER.isDebugEnabled()) LOGGER.debug("loading image: " + uri);
-                        context.getConfig().getHttpClient(uri).executeMethod(getMethod);
-                        statusCode = getMethod.getStatusCode();
-                        statusText = getMethod.getStatusText();
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("loading image: " + uri);
+                        HttpClientContext clientContext = context.getConfig().getHttpClientContext(uri);
+                        try (CloseableHttpResponse response = context.getConfig().getHttpClient(uri).execute(request, clientContext)) {
+                            statusCode = response.getStatusLine().getStatusCode();
+                            statusText = response.getStatusLine().getReasonPhrase();
 
-                        Header contentTypeHeader = getMethod.getResponseHeader("Content-Type");
-                        if (contentTypeHeader == null) {
-                            contentType = "";
-                        } else {
-                            contentType = contentTypeHeader.getValue();
+                            Header contentTypeHeader = response.getFirstHeader("Content-Type");
+                            contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : "";
+                            HttpEntity entity = response.getEntity();
+                            data = entity != null ? EntityUtils.toByteArray(entity) : null;
                         }
-                        data = getMethod.getResponseBody();
                     } finally {
                         timer.close();
-                        if (getMethod != null) {
-                            getMethod.releaseConnection();
-                        }
                     }
                 }
 
