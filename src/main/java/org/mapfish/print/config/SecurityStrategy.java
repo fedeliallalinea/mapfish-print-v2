@@ -5,7 +5,7 @@ import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

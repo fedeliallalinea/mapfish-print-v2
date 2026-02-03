@@ -9,6 +9,7 @@ Release notes:
 * Migrate to Spring Framework 7.0.2
 * Migrate to Spring Framework 6.2.12 and Jakarta Servlet 6.0.0
 * Update metrics to 4.2.37
+* Migrate to Apache HttpClient 5
 
 ## Release 2.4.0
 

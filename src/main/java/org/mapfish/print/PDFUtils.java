@@ -59,12 +59,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -287,8 +287,8 @@ public class PDFUtils {
                             LOGGER.debug("loading image: " + uri);
                         HttpClientContext clientContext = context.getConfig().getHttpClientContext(uri);
                         try (CloseableHttpResponse response = context.getConfig().getHttpClient(uri).execute(request, clientContext)) {
-                            statusCode = response.getStatusLine().getStatusCode();
-                            statusText = response.getStatusLine().getReasonPhrase();
+                            statusCode = response.getCode();
+                            statusText = response.getReasonPhrase();
 
                             Header contentTypeHeader = response.getFirstHeader("Content-Type");
                             contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : "";

@@ -1,7 +1,9 @@
 package org.mapfish.print;
 
-import org.apache.http.config.SocketConfig;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.util.Timeout;
 import org.mapfish.print.map.MapTileTask;
 import org.pvalsecc.concurrent.OrderedResultsExecutor;
 
@@ -25,19 +27,20 @@ public class ThreadResources {
 
     private int perHostParallelFetches = 10;
     private int globalParallelFetches = 30;
+    private int connectionTimeout = 30000;
     private int socketTimeout = 30000;
 
     @PostConstruct
     public void init() {
-        this.connectionManager = new PoolingHttpClientConnectionManager();
-
-        this.connectionManager.setDefaultMaxPerRoute(perHostParallelFetches);
-        this.connectionManager.setMaxTotal(globalParallelFetches);
-
-        SocketConfig socketConfig = SocketConfig.custom()
-                .setSoTimeout(socketTimeout)
+        final ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                .setConnectTimeout(Timeout.ofMilliseconds(connectionTimeout))
+                .setSocketTimeout(Timeout.ofMilliseconds(socketTimeout))
                 .build();
-        this.connectionManager.setDefaultSocketConfig(socketConfig);
+        this.connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setDefaultConnectionConfig(connectionConfig)
+                .setMaxConnPerRoute(perHostParallelFetches)
+                .setMaxConnTotal(globalParallelFetches)
+                .build();
 
         mapRenderingExecutor = new OrderedResultsExecutor<MapTileTask>(globalParallelFetches, "tilesReader");
         mapRenderingExecutor.start();
@@ -58,6 +61,10 @@ public class ThreadResources {
 
     public void setGlobalParallelFetches(int globalParallelFetches) {
         this.globalParallelFetches = globalParallelFetches;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
     }
 
     public void setSocketTimeout(int socketTimeout) {

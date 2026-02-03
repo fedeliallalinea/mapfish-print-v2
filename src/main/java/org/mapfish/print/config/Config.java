@@ -20,13 +20,14 @@
 package org.mapfish.print.config;
 
 import com.codahale.metrics.MetricRegistry;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.util.Timeout;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -367,7 +368,7 @@ public class Config implements Closeable {
 
         // httpclient is a bit pesky about loading everything in memory...
         // disabling the warnings.
-        Logger logger=LogManager.getLogger(HttpRequestBase.class);
+        Logger logger=LogManager.getLogger(HttpUriRequestBase.class);
         Configurator.setLevel(logger,Level.ERROR);
 
         return httpClient;
@@ -385,11 +386,10 @@ public class Config implements Closeable {
         return this.threadResources.getConnectionManager();
     }
 
-    private RequestConfig createRequestConfig(URI uri) {
+    RequestConfig createRequestConfig(URI uri) {
         RequestConfig.Builder builder = RequestConfig.custom()
-                .setConnectTimeout(connectionTimeout)
-                .setConnectionRequestTimeout(connectionTimeout)
-                .setSocketTimeout(socketTimeout);
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectionTimeout))
+                .setResponseTimeout(Timeout.ofMilliseconds(socketTimeout));
 
         // configure proxies for URI
         ProxySelector selector = ProxySelector.getDefault();
@@ -400,7 +400,7 @@ public class Config implements Closeable {
             String hostName = socketAddress.getHostName();
             int port = socketAddress.getPort();
 
-            HttpHost httpHost = new HttpHost(hostName, port, "http");
+            HttpHost httpHost = new HttpHost(uri.getScheme(), hostName, port);
             builder.setProxy(httpHost);
         }
         return builder.build();

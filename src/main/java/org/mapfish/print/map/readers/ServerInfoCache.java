@@ -2,10 +2,10 @@ package org.mapfish.print.map.readers;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.commons.logging.Log;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.mapfish.print.RenderingContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -105,8 +105,8 @@ public class ServerInfoCache<T extends ServiceInfo> {
                 }
                 HttpClientContext clientContext = context.getConfig().getHttpClientContext(baseUrl);
                 try(CloseableHttpResponse response = context.getConfig().getHttpClient(baseUrl).execute(request, clientContext)) {
-                    int code = response.getStatusLine().getStatusCode();
-                    String reason = response.getStatusLine().getReasonPhrase();
+                    int code = response.getCode();
+                    String reason = response.getReasonPhrase();
                     if (code < 200 || code >= 300) {
                         throw new IOException("Error " + code + " while reading the Capabilities from " + url + ": " + reason);
                     }

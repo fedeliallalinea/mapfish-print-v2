@@ -49,7 +49,7 @@ public class PDFUtilsTest extends PdfTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Configurator.setLevel(LogManager.getLogger("org.apache.commons.httpclient"),Level.INFO);
+        Configurator.setLevel(LogManager.getLogger("org.apache.http"),Level.INFO);
         Configurator.setLevel(LogManager.getLogger("httpclient"), Level.INFO);
 
         httpd = new FakeHttpd(

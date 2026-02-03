@@ -52,6 +52,13 @@ security:
     username: xyz
     password: yxz
     preemptive: true
+  - !basicAuth
+    matcher: !dnsMatch
+      host: c2cpc42.camptocamp.com
+      port: 80
+    username: abc
+    password: cba
+    preemptive: false
 
 
 layouts:

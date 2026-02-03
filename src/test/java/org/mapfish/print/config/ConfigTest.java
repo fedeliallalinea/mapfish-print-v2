@@ -19,7 +19,15 @@
 
 package org.mapfish.print.config;
 
+import org.apache.hc.client5.http.auth.AuthCache;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.util.Timeout;
 import org.json.JSONWriter;
+import org.junit.Before;
 import org.junit.Test;
 import org.mapfish.print.PrintTestCase;
 import org.mapfish.print.ShellMapPrinter;
@@ -28,20 +36,41 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ConfigTest extends PrintTestCase {
 
     public static final String GEORCHESTRA_YAML = "config-georchestra.yaml";
+
+    public static final String CONFIG_TEST_CLASS_FILE = ConfigTest.class.getResource(ConfigTest.class.getSimpleName() + ".class"
+            ).getFile();
+
+    public static final File CONFIG_TEST_CLASS_DIR = new File(CONFIG_TEST_CLASS_FILE).getParentFile();
+
+    private ThreadResources threadResources;
+
+    @Before
+    public void setup() throws Exception {
+        threadResources = new ThreadResources();
+        threadResources.init();
+    }
 
     @Test
     public void testParse() throws FileNotFoundException {
@@ -71,8 +100,6 @@ public class ConfigTest extends PrintTestCase {
         Map<String, File> filesInSamplesDir = getSampleConfigFiles();
         StringBuilder errorString = new StringBuilder("The following errors occurred while parsing yaml config files: \n");
         boolean error = false;
-        ThreadResources threadResources = new ThreadResources();
-        threadResources.init();
         try {
             final ConfigFactory configFactory = new ConfigFactory(threadResources);
             for (File file : filesInSamplesDir.values()) {
@@ -110,8 +137,6 @@ public class ConfigTest extends PrintTestCase {
         File configFile = getConfigLarge();
         StringBuilder errorString = new StringBuilder("The following errors occurred while parsing yaml config file: \n");
         boolean error = false;
-        ThreadResources threadResources = new ThreadResources();
-        threadResources.init();
         try {
             final ConfigFactory configFactory = new ConfigFactory(threadResources);
             try {
@@ -139,11 +164,73 @@ public class ConfigTest extends PrintTestCase {
 
     }
 
+    @Test
+    public void testCreateRequestConfig() throws Exception{
+        final Config config = loadSampleConfig();
+        final var uri = new java.net.URI("http://c2cpc61.camptocamp.com");
 
+        // Save original proxy selector
+        ProxySelector originalProxySelector = ProxySelector.getDefault();
+
+        try {
+            ProxySelector.setDefault(new ProxySelector() {
+                @Override
+                public List<Proxy> select(URI uri) {
+                    return Arrays.asList(new Proxy(Proxy.Type.HTTP, new java.net.InetSocketAddress("mapfishprint.org", 8080)));
+                }
+
+                @Override
+                public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+                    // do nothing
+                }
+            });
+            final RequestConfig requestConfig = config.createRequestConfig(uri);
+            assertNotNull(requestConfig);
+            assertEquals(Timeout.ofMilliseconds(2400000), requestConfig.getConnectionRequestTimeout());
+            assertEquals(Timeout.ofMilliseconds(2400000), requestConfig.getResponseTimeout());
+            assertEquals("mapfishprint.org", requestConfig.getProxy().getHostName());
+            assertEquals(8080, requestConfig.getProxy().getPort());
+        } finally {
+            // Restore original proxy selector to avoid affecting other tests
+            ProxySelector.setDefault(originalProxySelector);
+        }
+    }
+
+    @Test
+    public void testGetHttpClientContext() throws Exception {
+        final Config config = loadSampleConfig();
+        final var uri = new java.net.URI("http://c2cpc61.camptocamp.com");
+        final HttpClientContext ctx = config.getHttpClientContext(uri);
+        assertNotNull(ctx);
+        final var credentials = (UsernamePasswordCredentials) ctx.getCredentialsProvider().getCredentials(
+                new AuthScope(uri.getHost(), uri.getPort()), ctx
+        );
+        assertEquals("xyz", credentials.getUserName());
+        assertEquals("yxz", String.valueOf(credentials.getUserPassword()));
+    }
+
+    @Test
+    public void testGetHttpClientContext_casePreemptiveTrue() throws Exception {
+        final Config config = loadSampleConfig();
+        final var uri = new java.net.URI("http://c2cpc61.camptocamp.com");
+        final HttpClientContext ctx = config.getHttpClientContext(uri);
+        assertNotNull(ctx);
+        final AuthCache authCache = config.getHttpClientContext(uri).getAuthCache();
+        assertNotNull(authCache);
+        assertNotNull(authCache.get(new HttpHost(uri.getHost())));
+    }
+
+    @Test
+    public void testGetHttpClientContext_casePreemptiveFalse() throws Exception {
+        final Config config = loadSampleConfig();
+        final var uri = new java.net.URI("http://c2cpc42.camptocamp.com");
+        final HttpClientContext ctx = config.getHttpClientContext(uri);
+        assertNotNull(ctx);
+        assertNull(ctx.getAuthCache());
+    }
 
     public static Map<String, File> getSampleConfigFiles() {
-        final String configTestClassFile = ConfigTest.class.getResource(ConfigTest.class.getSimpleName() + ".class").getFile();
-        final File[] sample_config_yamls = new File(new File(configTestClassFile).getParentFile(), "sample_config_yaml").listFiles();
+        final File[] sample_config_yamls = new File(CONFIG_TEST_CLASS_DIR, "sample_config_yaml").listFiles();
         Map<String, File> nameToFileMap = new HashMap<String, File>();
 
         for (File file : sample_config_yamls) {
@@ -153,7 +240,13 @@ public class ConfigTest extends PrintTestCase {
     }
 
     public static File getConfigLarge() {
-        final String configTestClassFile = ConfigTest.class.getResource(ConfigTest.class.getSimpleName() + ".class").getFile();
-        return new File(new File(configTestClassFile).getParentFile(), "sample_config_yaml" + File.separator + "specific_samples" + File.separator + "configLarge.yaml");
+        return new File(CONFIG_TEST_CLASS_DIR, "sample_config_yaml" + File.separator + "specific_samples" + File.separator + "configLarge.yaml");
+    }
+
+    public Config loadSampleConfig() {
+        final var configFactory = new ConfigFactory(threadResources);
+
+        final File configFile = new File(CONFIG_TEST_CLASS_DIR, "sample_config_yaml" + File.separator + "config.yaml");
+        return configFactory.fromYaml(configFile);
     }
 }

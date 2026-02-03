@@ -40,7 +40,7 @@ public class LegendsBlockTest {
 
     @Before
     public void setUp() throws Exception {
-        Configurator.setLevel(LogManager.getLogger("org.apache.commons.httpclient"), Level.INFO);
+        Configurator.setLevel(LogManager.getLogger("org.apache.http"), Level.INFO);
         Configurator.setLevel(LogManager.getLogger("httpclient"),(Level.INFO));
 
         httpd = new FakeHttpd(

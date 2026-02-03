@@ -2,15 +2,14 @@ package org.mapfish.print.config;
 
 import java.net.URI;
 
-import org.apache.http.HttpHost;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.auth.AuthCache;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.auth.BasicScheme;
 
 public class BasicAuthSecurity extends SecurityStrategy {
 
@@ -22,16 +21,16 @@ public class BasicAuthSecurity extends SecurityStrategy {
     public HttpClientContext createContext(URI uri){
         if(username==null || password==null) throw new IllegalStateException("username and password configuration of BasicAuthSecurity is required");
 
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
                 new AuthScope(uri.getHost(), uri.getPort()),
-                new UsernamePasswordCredentials(username, password)
+                new UsernamePasswordCredentials(username, password.toCharArray())
         );
         HttpClientContext context = HttpClientContext.create();
         context.setCredentialsProvider(credsProvider);
 
         if (preemptive) {
-            HttpHost target = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
+            HttpHost target = new HttpHost(uri.getScheme(), uri.getHost(), uri.getPort());
             AuthCache authCache = new BasicAuthCache();
             authCache.put(target, new BasicScheme());
             context.setAuthCache(authCache);

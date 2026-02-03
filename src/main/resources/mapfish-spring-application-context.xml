@@ -8,9 +8,10 @@
 	<bean id="mapPrinter" class="org.mapfish.print.MapPrinter" scope="prototype"></bean>
 	<bean id="configFactory" class="org.mapfish.print.config.ConfigFactory"></bean>
 	<bean id="threadResources" class="org.mapfish.print.ThreadResources">
-        <property name="socketTimeout" value="30000" />
-        <property name="globalParallelFetches" value="200"/>
-        <property name="perHostParallelFetches" value="30" />
+		<property name="connectionTimeout" value="30000"/>
+		<property name="socketTimeout" value="30000" />
+		<property name="globalParallelFetches" value="200"/>
+		<property name="perHostParallelFetches" value="30" />
 	</bean>
 
 	<!-- Define MapReaderFactories -->
