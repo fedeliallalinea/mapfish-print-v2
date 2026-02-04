@@ -74,7 +74,7 @@ public class MapPrinterServlet extends BaseMapServlet {
     protected static final String TEMP_FILE_METADATA_PREFIX = "mapfish-print-metadata";
     @Serial
     private static final long serialVersionUID = -4706371598927161642L;
-    private static final String CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    private static final String CONTEXT_TEMPDIR = "jakarta.servlet.context.tempdir";
     private static final String INFO_URL = "/info.json";
     private static final String PRINT_URL = "/print.pdf";
     private static final String CREATE_URL = "/create.json";
