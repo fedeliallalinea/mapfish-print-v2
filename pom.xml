@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
   <version>2.5-SNAPSHOT</version>
@@ -15,7 +15,7 @@
     <name>MapFish</name>
     <url>http://www.mapfish.org</url>
   </organization>
-  
+
   <licenses>
     <license>
       <name>GPL-3.0-or-later</name>
@@ -23,7 +23,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:git:git@github.com:mapfish/mapfish-print-v2.git</connection>
     <developerConnection>scm:git:git@github.com:mapfish/mapfish-print-v2.git</developerConnection>
@@ -35,10 +35,10 @@
     <system>github</system>
     <url>https://github.com/mapfish/mapfish-print-v2/issues</url>
   </issueManagement>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--log4j-version>2.24.3</log4j-version-->
+    <log4j-version>2.24.3</log4j-version>
     <spring.version>7.0.2</spring.version>
     <gt.version>35-SNAPSHOT</gt.version>
     <imagen.version>0.9.1-SNAPSHOT</imagen.version> <!-- sync with gt-platform-dependences -->
@@ -48,9 +48,24 @@
     <fork.javac>true</fork.javac>
     <javac.maxHeapSize>512m</javac.maxHeapSize>
   </properties>
-  
+
   <dependencyManagement>
     <dependencies>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j-version}</version>
+      </dependency>
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gt-bom</artifactId>
@@ -144,7 +159,7 @@
       </dependency>
       <dependency>
         <groupId>io.dropwizard.metrics</groupId>
-        <artifactId>metrics-servlet</artifactId>
+        <artifactId>metrics-jakarta-servlet</artifactId>
         <version>${metrics-version}</version>
       </dependency>
       <dependency>
@@ -174,7 +189,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -285,9 +300,14 @@
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-jakarta-servlet</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-jakarta-servlets</artifactId>
       <scope>compile</scope>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-httpclient</artifactId>
@@ -317,7 +337,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <!-- ======================================================= -->
@@ -331,7 +351,7 @@
           <release>17</release> <!-- Java release version -->
           <debug>true</debug>   <!-- Whether to include debugging information.   -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
-          <fork>${fork.javac}</fork> 
+          <fork>${fork.javac}</fork>
           <maxmem>${javac.maxHeapSize}</maxmem>
         </configuration>
       </plugin>
@@ -410,7 +430,7 @@
       <url>https://repo.osgeo.org/repository/geoserver-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
-  
+
   <profiles>
     <!-- build docs first, and this profile -->
     <!-- will assemble into a zip download -->
